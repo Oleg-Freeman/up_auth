@@ -14,7 +14,7 @@ import { LoginDto, LogoutParamsDto, RegisterDto } from './dto';
 import { CreateUserResponseInterceptor } from './interceptors';
 import { AuthGuard } from './guards';
 import { UserDocument } from './user.model';
-import { UserResponseInterface } from './interfaces';
+import { InfoInterface, UserResponseInterface } from './interfaces';
 import { Token, User } from './decorators';
 
 @Controller('/auth')
@@ -48,5 +48,11 @@ export class AuthController {
     @Query() query: LogoutParamsDto,
   ): Promise<void> {
     return this._authService.logout({ user, token, all: query.all });
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/info')
+  async info(@User() user: UserDocument): Promise<InfoInterface> {
+    return this._authService.info(user);
   }
 }

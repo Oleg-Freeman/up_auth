@@ -46,11 +46,7 @@ export class AuthService {
       idType: EMAIL_REG_EX.test(id) ? IdTypes.EMAIL : IdTypes.PHONE,
     });
 
-    const token = this._jwtService.sign({ userId: newUser.id });
-
-    newUser.tokens = [token];
-
-    await newUser.save();
+    const token = await this.getToken(newUser);
 
     return { user: newUser, token };
   }
@@ -77,11 +73,7 @@ export class AuthService {
       );
     }
 
-    const token = this._jwtService.sign({ userId: user.id });
-
-    user.tokens = user.tokens.concat([token]);
-
-    await user.save();
+    const token = await this.getToken(user);
 
     return { token, user };
   }
@@ -90,5 +82,22 @@ export class AuthService {
     await this._userModel.findByIdAndUpdate(user._id, {
       ...(all ? { $unset: { tokens: 1 } } : { $pull: { tokens: token } }),
     });
+  }
+
+  async info(user: UserDocument) {
+    const token = await this.getToken(user);
+
+    return { id: user.login, idType: user.idType, token };
+  }
+
+  private async getToken(user: UserDocument) {
+    const token = this._jwtService.sign({ userId: user.id });
+    user.tokens = (user.tokens && user.tokens.length ? user.tokens : []).concat(
+      [token],
+    );
+
+    await user.save();
+
+    return token;
   }
 }

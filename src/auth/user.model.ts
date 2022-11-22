@@ -9,6 +9,7 @@ import {
   IdTypes,
   BaseModel,
 } from '../constants';
+import { Document, Types } from 'mongoose';
 
 @Schema({ versionKey: false, collection: ModelNames.USER, timestamps: true })
 export class UserModel extends BaseModel {
@@ -43,4 +44,4 @@ export class UserModel extends BaseModel {
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);
 
-export type UserDocument = UserModel & Document;
+export type UserDocument = UserModel & Document & { _id: Types.ObjectId };
