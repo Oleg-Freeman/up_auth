@@ -33,7 +33,6 @@ export class UserModel {
     required: true,
     trim: true,
     match: [PASSWORD_REG_EX, NOT_VALID_PASSWORD],
-    select: false,
   })
   password: string;
 
@@ -41,16 +40,6 @@ export class UserModel {
   tokens?: string[];
 }
 
-const UserSchema = SchemaFactory.createForClass(UserModel);
-
-UserSchema.set('toJSON', {
-  transform: function (doc, ret) {
-    delete ret['password'];
-    delete ret['tokens'];
-    return ret;
-  },
-});
-
-export { UserSchema };
+export const UserSchema = SchemaFactory.createForClass(UserModel);
 
 export type UserDocument = UserModel & Document;

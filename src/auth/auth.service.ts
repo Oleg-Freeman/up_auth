@@ -1,16 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { genSalt, hash } from 'bcryptjs';
+import { compare, genSalt, hash } from 'bcryptjs';
 import {
   EMAIL_REG_EX,
   ModelNames,
+  NOT_VALID_CREDENTIALS,
   USER_ALREADY_REGISTERED,
 } from '../constants';
 import { UserDocument } from './user.model';
 import { RegisterDto } from './dto';
 import { IdTypes } from '../constants/id-types';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/login.dto';
+import { UserResponseInterface } from './interfaces';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +27,7 @@ export class AuthService {
     password,
     id,
     name,
-  }: RegisterDto): Promise<{ user: UserDocument; token: string }> {
+  }: RegisterDto): Promise<UserResponseInterface> {
     const user = await this._userModel.findOne({ login: id });
 
     if (user) {
@@ -51,5 +54,33 @@ export class AuthService {
     await newUser.save();
 
     return { user: newUser, token };
+  }
+
+  async login({ password, id }: LoginDto): Promise<UserResponseInterface> {
+    const user = await this._userModel.findOne({ login: id });
+
+    if (!user) {
+      throw new HttpException(
+        { error: NOT_VALID_CREDENTIALS },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const isPasswordMatch = await compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      throw new HttpException(
+        { error: NOT_VALID_CREDENTIALS },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const token = this._jwtService.sign({ userId: user.id });
+
+    user.tokens = user.tokens.concat([token]);
+
+    await user.save();
+
+    return { token, user };
   }
 }
