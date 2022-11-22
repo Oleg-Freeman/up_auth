@@ -4,3 +4,4 @@ export const NOT_VALID_NAME = 'Not valid name';
 export const USER_ALREADY_REGISTERED = 'User already registered';
 export const NOT_VALID_PHONE_OR_EMAIL = 'Not valid phone number or email';
 export const NOT_VALID_CREDENTIALS = 'Not valid credentials';
+export const UNAUTHORIZED = 'Unauthorized';

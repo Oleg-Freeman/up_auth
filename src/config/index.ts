@@ -31,8 +31,8 @@ class ConfigService {
     return this.getValue('JWT_SECRET', true);
   }
 
-  getJwtExpiration(): string {
-    return this.getValue('JWT_EXP', true);
+  getJwtExpiration(): number {
+    return +this.getValue('JWT_EXP', true);
   }
 
   getValidationOptions(transform?: true): ValidationPipeOptions {

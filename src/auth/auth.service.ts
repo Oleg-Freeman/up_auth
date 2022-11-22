@@ -7,13 +7,12 @@ import {
   ModelNames,
   NOT_VALID_CREDENTIALS,
   USER_ALREADY_REGISTERED,
+  IdTypes,
 } from '../constants';
 import { UserDocument } from './user.model';
-import { RegisterDto } from './dto';
-import { IdTypes } from '../constants/id-types';
+import { RegisterDto, LoginDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from './dto/login.dto';
-import { UserResponseInterface } from './interfaces';
+import { UserResponseInterface, LogoutInterface } from './interfaces';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +26,7 @@ export class AuthService {
     password,
     id,
     name,
-  }: RegisterDto): Promise<UserResponseInterface> {
+  }: RegisterDto): Promise<UserResponseInterface<UserDocument>> {
     const user = await this._userModel.findOne({ login: id });
 
     if (user) {
@@ -56,7 +55,10 @@ export class AuthService {
     return { user: newUser, token };
   }
 
-  async login({ password, id }: LoginDto): Promise<UserResponseInterface> {
+  async login({
+    password,
+    id,
+  }: LoginDto): Promise<UserResponseInterface<UserDocument>> {
     const user = await this._userModel.findOne({ login: id });
 
     if (!user) {
@@ -82,5 +84,11 @@ export class AuthService {
     await user.save();
 
     return { token, user };
+  }
+
+  async logout({ user, token, all }: LogoutInterface): Promise<void> {
+    await this._userModel.findByIdAndUpdate(user._id, {
+      ...(all ? { $unset: { tokens: 1 } } : { $pull: { tokens: token } }),
+    });
   }
 }

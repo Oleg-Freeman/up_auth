@@ -6,11 +6,12 @@ import {
   NOT_VALID_PHONE_OR_EMAIL,
   PASSWORD_REG_EX,
   PHONE_NUMBER_REG_EX,
+  IdTypes,
+  BaseModel,
 } from '../constants';
-import { IdTypes } from '../constants/id-types';
 
 @Schema({ versionKey: false, collection: ModelNames.USER, timestamps: true })
-export class UserModel {
+export class UserModel extends BaseModel {
   @Prop({ required: true, trim: true })
   name: string;
 

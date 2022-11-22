@@ -1,7 +1,4 @@
-import { UserModel } from '../user.model';
-import { Types, Document } from 'mongoose';
-
-export interface UserResponseInterface {
+export interface UserResponseInterface<T> {
   token: string;
-  user: UserModel & Document & { _id: Types.ObjectId };
+  user: T;
 }

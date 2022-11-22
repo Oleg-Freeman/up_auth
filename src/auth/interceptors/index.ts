@@ -1,1 +1,1 @@
-export * from './clear-user-response.interceptor';
+export * from './create-user-response-interceptor.service';
