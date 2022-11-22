@@ -1,12 +1,12 @@
-// import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class BaseModel {
-  // @ApiProperty()
+  @ApiProperty()
   _id: string;
 
-  // @ApiProperty()
+  @ApiProperty()
   createdAt: Date;
 
-  // @ApiProperty()
+  @ApiProperty()
   updatedAt: Date;
 }

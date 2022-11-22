@@ -16,7 +16,17 @@ import { AuthGuard } from './guards';
 import { UserDocument } from './user.model';
 import { InfoInterface, UserResponseInterface } from './interfaces';
 import { Token, User } from './decorators';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { InfoResponse, UserResponse } from '../constants';
 
+@ApiTags('Auth')
 @Controller('/auth')
 export class AuthController {
   constructor(private readonly _authService: AuthService) {}
@@ -24,6 +34,8 @@ export class AuthController {
   @UseInterceptors(CreateUserResponseInterceptor)
   @Post('/signup')
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'User sign up' })
+  @ApiCreatedResponse({ type: UserResponse })
   async register(
     @Body() body: RegisterDto,
   ): Promise<UserResponseInterface<UserDocument>> {
@@ -33,6 +45,8 @@ export class AuthController {
   @UseInterceptors(CreateUserResponseInterceptor)
   @Post('/signin')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'User sign in' })
+  @ApiOkResponse({ type: UserResponse })
   async login(
     @Body() body: LoginDto,
   ): Promise<UserResponseInterface<UserDocument>> {
@@ -42,6 +56,9 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('/logout')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'User logout' })
+  @ApiNoContentResponse()
+  @ApiBearerAuth()
   async logout(
     @User() user: UserDocument,
     @Token() token: string,
@@ -52,6 +69,9 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('/info')
+  @ApiOperation({ summary: 'Get user info' })
+  @ApiOkResponse({ type: InfoResponse })
+  @ApiBearerAuth()
   async info(@User() user: UserDocument): Promise<InfoInterface> {
     return this._authService.info(user);
   }

@@ -24,7 +24,7 @@
 
 ## Description
 
-REST API server test.
+REST API server test. See documentation at `/swagger` for details
 
 ## Installation
 

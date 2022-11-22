@@ -10,12 +10,15 @@ import {
   BaseModel,
 } from '../constants';
 import { Document, Types } from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Schema({ versionKey: false, collection: ModelNames.USER, timestamps: true })
 export class UserModel extends BaseModel {
+  @ApiProperty()
   @Prop({ required: true, trim: true })
   name: string;
 
+  @ApiProperty()
   @Prop({
     required: true,
     unique: true,
@@ -28,6 +31,7 @@ export class UserModel extends BaseModel {
   })
   login: string;
 
+  @ApiProperty()
   @Prop({ required: true, enum: IdTypes })
   idType: IdTypes;
 
@@ -38,6 +42,7 @@ export class UserModel extends BaseModel {
   })
   password: string;
 
+  @ApiProperty()
   @Prop({ required: false })
   tokens?: string[];
 }
